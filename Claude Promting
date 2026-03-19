@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Prompting Cheat Sheet — Tax Workflow</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0f14;
+    --surface: #14171f;
+    --card: #1a1e28;
+    --border: #252a38;
+    --accent: #4fffb0;
+    --accent2: #4fa8ff;
+    --accent3: #ffb84f;
+    --accent4: #ff6b6b;
+    --text: #e8eaf0;
+    --muted: #6b7280;
+    --tag-bg: #1f2435;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'IBM Plex Sans', sans-serif;
+    min-height: 100vh;
+    padding: 40px 20px;
+  }
+
+  .page {
+    max-width: 860px;
+    margin: 0 auto;
+  }
+
+  /* Header */
+  .header {
+    margin-bottom: 48px;
+    border-left: 3px solid var(--accent);
+    padding-left: 20px;
+  }
+  .header-eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .header h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: 36px;
+    font-weight: 800;
+    line-height: 1.1;
+    color: var(--text);
+  }
+  .header h1 span { color: var(--accent); }
+  .header p {
+    margin-top: 10px;
+    font-size: 14px;
+    color: var(--muted);
+    font-weight: 300;
+  }
+
+  /* Section label */
+  .section-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    margin-top: 40px;
+  }
+
+  /* Cards grid */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .grid-1 { display: grid; grid-template-columns: 1fr; gap: 14px; }
+
+  @media (max-width: 600px) { .grid-2 { grid-template-columns: 1fr; } }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    transition: border-color 0.2s;
+  }
+  .card:hover { border-color: var(--accent); }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+  .card-icon {
+    width: 32px; height: 32px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  .green  { background: rgba(79,255,176,0.12); }
+  .blue   { background: rgba(79,168,255,0.12); }
+  .yellow { background: rgba(255,184,79,0.12); }
+  .red    { background: rgba(255,107,107,0.12); }
+
+  .card-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .card-subtitle {
+    font-size: 11px;
+    color: var(--muted);
+    margin-top: 1px;
+  }
+
+  /* Prompt rows */
+  .prompt-row {
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  .prompt-row:last-child { margin-bottom: 0; padding-bottom: 0; border-bottom: none; }
+
+  .prompt-label {
+    font-size: 11px;
+    color: var(--muted);
+    margin-bottom: 4px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .prompt-text {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--accent);
+    background: rgba(79,255,176,0.05);
+    border: 1px solid rgba(79,255,176,0.15);
+    border-radius: 6px;
+    padding: 8px 12px;
+    line-height: 1.5;
+  }
+  .prompt-text.blue-p {
+    color: var(--accent2);
+    background: rgba(79,168,255,0.05);
+    border-color: rgba(79,168,255,0.15);
+  }
+  .prompt-text.yellow-p {
+    color: var(--accent3);
+    background: rgba(255,184,79,0.05);
+    border-color: rgba(255,184,79,0.15);
+  }
+  .prompt-text.red-p {
+    color: var(--accent4);
+    background: rgba(255,107,107,0.05);
+    border-color: rgba(255,107,107,0.15);
+  }
+
+  /* Big tip card */
+  .tip-card {
+    background: linear-gradient(135deg, rgba(79,255,176,0.08), rgba(79,168,255,0.06));
+    border: 1px solid rgba(79,255,176,0.25);
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin-top: 14px;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+  }
+  .tip-icon { font-size: 22px; flex-shrink: 0; margin-top: 2px; }
+  .tip-body {}
+  .tip-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 6px;
+  }
+  .tip-text {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+  .tip-text strong { color: var(--text); }
+
+  /* Formula table */
+  .formula-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .formula-table th {
+    text-align: left;
+    padding: 8px 12px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border-bottom: 1px solid var(--border);
+  }
+  .formula-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+    line-height: 1.5;
+  }
+  .formula-table tr:last-child td { border-bottom: none; }
+  .formula-table td:first-child {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--accent3);
+    white-space: nowrap;
+    width: 140px;
+  }
+  .formula-table td:last-child { color: var(--muted); font-size: 12px; }
+
+  /* Tags */
+  .tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .tag {
+    background: var(--tag-bg);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 3px 9px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  /* Footer */
+  .footer {
+    margin-top: 48px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+  }
+  .footer span { color: var(--accent); }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-eyebrow">Carlos Olivencia Tax Services</div>
+    <h1>Claude Prompting<br><span>Cheat Sheet</span></h1>
+    <p>Tax workflow edition — ProConnect · QBO · Clients · Documents</p>
+  </div>
+
+  <!-- Section 1: Context Setting -->
+  <div class="section-label">01 — Set the Stage First</div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon green">🎯</div>
+        <div>
+          <div class="card-title">Role Setting</div>
+          <div class="card-subtitle">Tell Claude who it is</div>
+        </div>
+      </div>
+      <div class="prompt-row">
+        <div class="prompt-label">Tax Advisor Mode</div>
+        <div class="prompt-text">"Act as a tax professional helping me prepare a Schedule C return for a self-employed client."</div>
+      </div>
+      <div class="prompt-row">
+        <div class="prompt-label">Software Guide Mode</div>
+        <div class="prompt-text">"You are a ProConnect Tax expert. Walk me through [task] step by step."</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon blue">🔧</div>
+        <div>
+          <div class="card-title">Software Context</div>
+          <div class="card-subtitle">Specify your stack</div>
+        </div>
+      </div>
+      <div class="prompt-row">
+        <div class="prompt-label">Stack Declaration</div>
+        <div class="prompt-text blue-p">"I use ProConnect Tax and QuickBooks Online Accountant. Don't give me Drake or Lacerte instructions."</div>
+      </div>
+      <div class="prompt-row">
+        <div class="prompt-label">Workflow Context</div>
+        <div class="prompt-text blue-p">"I'm in QBOA → Prep for Taxes. Where do I go next to import into ProConnect?"</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 2: Deductions & Strategy -->
+  <div class="section-label">02 — Deductions & Tax Strategy</div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon yellow">💰</div>
+        <div>
+          <div class="card-title">Deduction Stacking</div>
+          <div class="card-subtitle">Reduce balance owed</div>
+        </div>
+      </div>
+      <div class="prompt-row">
+        <div class="prompt-label">Start with facts</div>
+        <div class="prompt-text yellow-p">"My client has $[X] net self-employment income. Before recommending deductions, ask me what you need to know about their situation."</div>
+      </div>
+      <div class="prompt-row">
+        <div class="prompt-label">Targeted ask</div>
+        <div class="prompt-text yellow-p">"What retirement contribution options can reduce SE tax for a sole proprietor with $80K net profit?"</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon green">📋</div>
+        <div>
+          <div class="card-title">Specific Forms</div>
+          <div class="card-subtitle">Form-level questions</div>
+        </div>
+      </div>
+      <div class="prompt-row">
+        <div class="prompt-label">Schedule C</div>
+        <div class="prompt-text">"Where on Schedule C does home office go? What form do I attach?"</div>
+      </div>
+      <div class="prompt-row">
+        <div class="prompt-label">QBI / 199A</div>
+        <div class="prompt-text">"Does QBI apply if my client's taxable income is already negative? Should I still enter it in ProConnect?"</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 3: Step-by-Step Control -->
+  <div class="section-label">03 — Control the Pace</div>
+  <div class="card grid-1">
+    <div class="card-header">
+      <div class="card-icon blue">🐢</div>
+      <div>
+        <div class="card-title">Step-by-Step Prompts</div>
+        <div class="card-subtitle">One action at a time — your preferred style</div>
+      </div>
+    </div>
+    <div class="prompt-row">
+      <div class="prompt-label">Slow walk</div>
+      <div class="prompt-text blue-p">"Walk me through this one step at a time. Wait for me to confirm before giving the next step."</div>
+    </div>
+    <div class="prompt-row">
+      <div class="prompt-label">Pause & confirm</div>
+      <div class="prompt-text blue-p">"Give me only Step 1. I'll tell you when I'm ready for Step 2."</div>
+    </div>
+    <div class="prompt-row">
+      <div class="prompt-label">Resume where you left off</div>
+      <div class="prompt-text blue-p">"We were on Step 2 of the Prep for Taxes workflow. I completed it. Continue from Step 3."</div>
+    </div>
+  </div>
+
+  <!-- Section 4: Client Docs & Letters -->
+  <div class="section-label">04 — Client Documents & Letters</div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon yellow">✉️</div>
+        <div>
+          <div class="card-title">Formal Letters</div>
+          <div class="card-subtitle">PDF-ready output</div>
+        </div>
+      </div>
+      <div class="prompt-row">
+        <div class="prompt-label">Letter request</div>
+        <div class="prompt-text yellow-p">"Write a formal letter to my client explaining why they owe taxes this year. Tone: professional but reassuring. Generate it as a downloadable PDF."</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon red">⚠️</div>
+        <div>
+          <div class="card-title">Notice Response</div>
+          <div class="card-subtitle">IRS / state notices</div>
+        </div>
+      </div>
+      <div class="prompt-row">
+        <div class="prompt-label">Analyze a notice</div>
+        <div class="prompt-text red-p">"I received a notice from [IRS / NYS / PR Hacienda]. Here's what it says: [paste text]. What does it mean and what action is required?"</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 5: Clarification Control -->
+  <div class="section-label">05 — Make Claude Ask Before Assuming</div>
+  <div class="tip-card">
+    <div class="tip-icon">💡</div>
+    <div class="tip-body">
+      <div class="tip-title">The Golden Rule for Your Workflow</div>
+      <div class="tip-text">
+        Add this line to any prompt where client details matter:<br><br>
+        <strong>"Before making any recommendations, ask me the questions you need about this client's situation."</strong><br><br>
+        This prevents Claude from assuming a client has a car, home office, or other deductions before you've confirmed the facts.
+      </div>
+    </div>
+  </div>
+
+  <!-- Section 6: Formula -->
+  <div class="section-label">06 — The Power Prompt Formula</div>
+  <div class="card">
+    <table class="formula-table">
+      <thead>
+        <tr>
+          <th>Component</th>
+          <th>What to include</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>[ROLE]</td>
+          <td>Who Claude should be — "tax professional," "ProConnect expert," "QBO guide"</td>
+        </tr>
+        <tr>
+          <td>[CONTEXT]</td>
+          <td>Software, client situation, jurisdiction, year — the facts that matter</td>
+        </tr>
+        <tr>
+          <td>[TASK]</td>
+          <td>Exactly what you want — walkthrough, letter, table, analysis, form entry</td>
+        </tr>
+        <tr>
+          <td>[CONSTRAINT]</td>
+          <td>Format, pace, assumptions — "step by step," "don't assume," "PDF output"</td>
+        </tr>
+        <tr>
+          <td>[CLARIFY]</td>
+          <td>Optional — "Ask me what you need before starting"</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="tags">
+      <span class="tag">ProConnect</span>
+      <span class="tag">QBOA</span>
+      <span class="tag">Schedule C</span>
+      <span class="tag">SEP-IRA</span>
+      <span class="tag">Solo 401k</span>
+      <span class="tag">QBI / 199A</span>
+      <span class="tag">1040-X</span>
+      <span class="tag">Books-to-Tax</span>
+      <span class="tag">PR Hacienda</span>
+      <span class="tag">NYS</span>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <div>Carlos Olivencia Tax Services · <span>Claude.ai</span> Prompting Guide</div>
+    <div>Tax Year <span>2024–2025</span></div>
+  </div>
+
+</div>
+</body>
+</html>
