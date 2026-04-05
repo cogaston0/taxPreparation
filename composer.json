@@ -1,0 +1,22 @@
+{
+    "name": "cogaston0/tax-preparation",
+    "description": "Tax Preparation Agent for Target.com",
+    "type": "project",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": {
+            "TaxPreparation\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "TaxPreparation\\Tests\\": "tests/"
+        }
+    },
+    "require": {
+        "php": ">=8.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^10.0"
+    }
+}
