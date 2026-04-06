@@ -1,0 +1,213 @@
+/* ============================================================
+   Hero Animation — Carlos Olivencia Tax Services
+   Wind + Bird animations for the paradise garden hero image
+   ============================================================ */
+
+/* ── Canvas overlay (wind particles drawn by JS) ── */
+#wind-canvas {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* ── SVG bird layer ── */
+#bird-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  overflow: hidden;
+}
+
+/* ── Leaf / petal overlay layer ── */
+#leaf-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+  overflow: hidden;
+}
+
+/* ── Wisteria sway (CSS filter + transform on the whole hero image) ── */
+@keyframes hero-breathe {
+  0%   { filter: brightness(1.00) saturate(1.00); }
+  40%  { filter: brightness(1.03) saturate(1.04); }
+  100% { filter: brightness(1.00) saturate(1.00); }
+}
+
+.hero-bg {
+  animation: hero-breathe 8s ease-in-out infinite;
+}
+
+/* ── Wisteria cluster sway overlay ── */
+.wisteria-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 40%;
+  pointer-events: none;
+  z-index: 2;
+  transform-origin: top center;
+  animation: wisteria-sway 4.5s ease-in-out infinite;
+}
+
+@keyframes wisteria-sway {
+  0%   { transform: rotate(-1.5deg) translateX(-4px); }
+  50%  { transform: rotate(1.5deg)  translateX(4px);  }
+  100% { transform: rotate(-1.5deg) translateX(-4px); }
+}
+
+/* ── Foreground leaf rustle overlay ── */
+.leaf-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+  transform-origin: bottom left;
+  animation: leaf-rustle 3.2s ease-in-out infinite alternate;
+}
+
+@keyframes leaf-rustle {
+  0%   { transform: skewX(-0.5deg) scale(1.000); }
+  100% { transform: skewX( 0.5deg) scale(1.003); }
+}
+
+/* ── Individual falling petal (created by JS, positioned via inline style) ── */
+.petal {
+  position: absolute;
+  pointer-events: none;
+  z-index: 3;
+  opacity: 0;
+  border-radius: 50% 0 50% 0;
+  animation: petal-fall linear forwards;
+}
+
+@keyframes petal-fall {
+  0%   { opacity: 0; transform: translateY(0)   rotate(0deg)   translateX(0); }
+  5%   { opacity: 0.85; }
+  80%  { opacity: 0.6; }
+  100% { opacity: 0;  transform: translateY(var(--fall-distance)) rotate(var(--spin)) translateX(var(--drift)); }
+}
+
+/* ── Wind streak particles (canvas fallback for pure CSS) ── */
+.wind-streak {
+  position: absolute;
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba(255,255,255,0.25), transparent);
+  pointer-events: none;
+  z-index: 2;
+  border-radius: 50%;
+  animation: streak-fly linear forwards;
+}
+
+@keyframes streak-fly {
+  0%   { opacity: 0; transform: scaleX(0)   translateX(0); }
+  10%  { opacity: 1; transform: scaleX(1);   }
+  90%  { opacity: 0.6; }
+  100% { opacity: 0; transform: scaleX(1) translateX(var(--streak-travel)); }
+}
+
+/* ── Bird SVG paths ── */
+.bird-svg {
+  position: absolute;
+  pointer-events: none;
+  z-index: 4;
+  overflow: visible;
+}
+
+/* wing-flap: upper/lower wing shapes oscillate */
+.wing-top {
+  transform-origin: 50% 100%;
+  animation: wing-flap-top var(--flap-speed, 0.38s) ease-in-out infinite alternate;
+}
+.wing-bottom {
+  transform-origin: 50% 0%;
+  animation: wing-flap-bot var(--flap-speed, 0.38s) ease-in-out infinite alternate;
+}
+
+@keyframes wing-flap-top {
+  0%   { transform: rotate(  0deg) scaleY(1);   }
+  100% { transform: rotate(-30deg) scaleY(0.6); }
+}
+@keyframes wing-flap-bot {
+  0%   { transform: rotate( 0deg) scaleY(1);   }
+  100% { transform: rotate(25deg) scaleY(0.6); }
+}
+
+/* Bird trajectories — JS moves them along curved paths via requestAnimationFrame.
+   These classes just set initial position and size. */
+.bird-parrot {
+  width: 52px;
+  height: 40px;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+}
+
+.bird-small {
+  width: 28px;
+  height: 22px;
+  filter: drop-shadow(0 1px 3px rgba(0,0,0,0.25));
+}
+
+/* ── Lotus bob in the breeze ── */
+.lotus-layer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 30%;
+  height: 35%;
+  pointer-events: none;
+  z-index: 2;
+  transform-origin: bottom center;
+  animation: lotus-bob 5s ease-in-out infinite;
+}
+
+@keyframes lotus-bob {
+  0%   { transform: rotate(-1deg)  translateY(0px); }
+  50%  { transform: rotate( 0.8deg) translateY(-3px); }
+  100% { transform: rotate(-1deg)  translateY(0px); }
+}
+
+/* ── Waterfall shimmer (right side) ── */
+.waterfall-shimmer {
+  position: absolute;
+  right: 14%;
+  top: 18%;
+  width: 6%;
+  height: 25%;
+  background: linear-gradient(
+    180deg,
+    rgba(255,255,255,0.0)  0%,
+    rgba(255,255,255,0.18) 30%,
+    rgba(200,230,255,0.22) 60%,
+    rgba(255,255,255,0.0)  100%
+  );
+  pointer-events: none;
+  z-index: 2;
+  border-radius: 40%;
+  animation: waterfall-flow 1.4s linear infinite;
+}
+
+@keyframes waterfall-flow {
+  0%   { transform: translateY(-8px)  scaleX(1);   opacity: 0.5; }
+  50%  { transform: translateY(  0px) scaleX(1.1); opacity: 0.9; }
+  100% { transform: translateY( 8px)  scaleX(1);   opacity: 0.5; }
+}
+
+/* ── Hair / garland gentle sway on the figures (subtle) ── */
+.figure-sway-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 2;
+  transform-origin: bottom center;
+  animation: figure-sway 6s ease-in-out infinite;
+}
+
+@keyframes figure-sway {
+  0%   { transform: rotate(0deg); }
+  25%  { transform: rotate(-0.3deg); }
+  75%  { transform: rotate(0.3deg); }
+  100% { transform: rotate(0deg); }
+}
